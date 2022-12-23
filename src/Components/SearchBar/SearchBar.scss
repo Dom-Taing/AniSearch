@@ -1,0 +1,56 @@
+.Search {
+    width: 100%;
+    border-radius: 1em;
+    border-style: solid;
+    overflow: hidden;
+    max-height: 20em;
+    overflow: scroll;
+  }
+  
+  .Search::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .Search__form {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    padding: 0.5em 1em;
+  }
+  
+  .Search__icon {
+    display: block;
+  }
+  
+  .Search__input {
+    width: 100%;
+    padding: 0.2em;
+    border-style: none;
+    margin: 0 0.5em;
+  }
+  
+  .Search__input:focus {
+    outline: none;
+  }
+  
+  .Suggestion__list {
+    list-style: none;
+    text-align: left;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .Suggestion__ele {
+    display: flex;
+    padding: 0 1em;
+  }
+  
+  .Suggestion__ele:hover {
+    background-color: rgb(228, 228, 228);
+  }
+  
+  .Suggestion__ele__text {
+    display: inline-block;
+    margin: 0 0.5em 1em;
+  }
+  
