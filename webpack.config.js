@@ -7,6 +7,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
+    publicPath: '/'
   },
   module: {
     rules: [
@@ -23,7 +24,15 @@ module.exports = {
       {
         test: /\.s[ac]ss$/i,
         use: ["style-loader", "css-loader", "sass-loader"],
-      }
+      },
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        use: [
+          {
+            loader: 'file-loader',
+          },
+        ],
+      },
     ]
   },
   devServer: {
@@ -32,7 +41,8 @@ module.exports = {
     },
     compress: true,
     port: 5500,
-    open: true
+    open: true,
+    historyApiFallback: true
   },
   plugins: [
     new HtmlWebpackPlugin({

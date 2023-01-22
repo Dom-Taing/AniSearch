@@ -1,0 +1,45 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+  }
+  
+html, body{
+    margin: 0;
+    // background: black;
+    font-family: 'Montserrat', helvetica, arial, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.App {
+    min-height: 100vh;
+    margin: 0;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    &--Dark {
+        background-image: linear-gradient( rgba(30,27,38, 0.95), rgba(30,27,38, 0.95)), url(https://images6.alphacoders.com/104/thumb-1920-1042578.png);
+    }
+    &--Light {
+        background-image: linear-gradient( rgba(200,200,200, 0.95), rgba(200,200,200, 0.95)), url(https://ae01.alicdn.com/kf/H780a714db5ac42c39d17d156c90c6f189/Anime-Demon-Slayer-Kimetsu-no-Yaiba-Wall-Murals-Kochou-Shinobu-Wallpaper-Custom-3D-Wallpaper-Bedroom-Cosplay.jpg_640x640.jpg);
+    }
+}
+
+.Search__section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 195px;
+}
+
+.Search__container {
+    // min-width: 566px;
+    // width: 50%;
+    position: absolute;
+    top: 90px;
+    // margin-top: 20vh;
+    width: 566px;
+    max-width: 100vw;
+    z-index: 90;
+}
+  

@@ -3,8 +3,10 @@
     border-radius: 1em;
     border-style: solid;
     overflow: hidden;
-    max-height: 20em;
-    overflow: scroll;
+    // max-height: 20em;
+    // overflow: scroll;
+    background-color: white;
+    position:relative;
   }
   
   .Search::-webkit-scrollbar {
@@ -38,6 +40,13 @@
     text-align: left;
     margin: 0;
     padding: 0;
+    // overflow: hidden;
+    max-height: 20em;
+    overflow: scroll;
+  }
+
+  .Suggestion__list::-webkit-scrollbar {
+    display: none;
   }
   
   .Suggestion__ele {
@@ -46,6 +55,10 @@
   }
   
   .Suggestion__ele:hover {
+    background-color: rgb(228, 228, 228);
+  }
+
+  .Suggestion__ele--focus {
     background-color: rgb(228, 228, 228);
   }
   
