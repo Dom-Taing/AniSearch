@@ -3,7 +3,13 @@ import React, { useState } from "react";
 import { useOutsideAlerter } from "../../Hooks/useOutsideAlerter";
 import "./SearchBar.scss";
 
-export default function SearchBar({ initVal, dataArray, onChange, onClickEle, onSubmit }) {
+export default function SearchBar({
+  initVal,
+  dataArray,
+  onChange,
+  onClickEle,
+  onSubmit,
+}) {
   const [display, setDisplay] = useState(false);
   // const [inputDisplay, setInputDisplay] = useState("");
   const [inputDisplay, setInputDisplay] = useState("");
@@ -15,9 +21,10 @@ export default function SearchBar({ initVal, dataArray, onChange, onClickEle, on
 
   useEffect(() => {
     if (initVal) {
-      setInputDisplay(initVal)
+      setInputDisplay(initVal);
+      setYourInput(initVal)
     }
-  }, [initVal])
+  }, [initVal]);
 
   useOutsideAlerter(
     wrapperRef,
@@ -32,30 +39,29 @@ export default function SearchBar({ initVal, dataArray, onChange, onClickEle, on
   // creating an array of size dataArray for the ref
   useEffect(() => {
     selectionRef.current = selectionRef.current.slice(0, dataArray.length);
-  }, [dataArray])
-
+  }, [dataArray]);
 
   function handleKeyDown(e) {
     e = e || window.event;
-    let tempIndex = selectIndex
-    if(e.key === 'ArrowDown') {
+    let tempIndex = selectIndex;
+    if (e.key === "ArrowDown") {
       e.preventDefault();
-      tempIndex = (tempIndex + 1) % (dataArray.length + 1)
-      setSelectIndex(tempIndex)
-    } else if (e.key === 'ArrowUp') {
+      tempIndex = (tempIndex + 1) % (dataArray.length + 1);
+      setSelectIndex(tempIndex);
+    } else if (e.key === "ArrowUp") {
       e.preventDefault();
       if (tempIndex === 0) {
-        tempIndex = dataArray.length + 1
+        tempIndex = dataArray.length + 1;
       }
-      tempIndex = (tempIndex - 1) % (dataArray.length + 1)
-      setSelectIndex(tempIndex)
+      tempIndex = (tempIndex - 1) % (dataArray.length + 1);
+      setSelectIndex(tempIndex);
     }
 
     if (tempIndex === 0) {
-      setInputDisplay(yourInput)
+      setInputDisplay(yourInput);
     } else {
-      setInputDisplay(dataArray[tempIndex - 1])
-      console.log(selectionRef.current[tempIndex - 1])
+      setInputDisplay(dataArray[tempIndex - 1]);
+      console.log(selectionRef.current[tempIndex - 1]);
       selectionRef.current[tempIndex - 1].scrollIntoViewIfNeeded(false);
     }
   }
@@ -73,11 +79,25 @@ export default function SearchBar({ initVal, dataArray, onChange, onClickEle, on
     // setYourInput(inputDisplay);
     // setSelectIndex(0);
     // setDisplay(false);
-    onSubmit();
+    if (selectIndex === 0) {
+      onSubmit(yourInput);
+      setDisplay(false);
+    } else {
+      onClickEle(inputDisplay);
+      setYourInput(inputDisplay);
+      setSelectIndex(0);
+      setDisplay(false);
+    }
   }
 
   return (
-    <div className="Search" ref={wrapperRef} tabIndex={-1} onKeyDown={handleKeyDown} onSubmit={handleSubmit}>
+    <div
+      className="Search"
+      ref={wrapperRef}
+      tabIndex={-1}
+      onKeyDown={handleKeyDown}
+      onSubmit={handleSubmit}
+    >
       <form className="Search__form">
         <i className="fa fa-search"></i>
         <input
@@ -93,13 +113,15 @@ export default function SearchBar({ initVal, dataArray, onChange, onClickEle, on
           {dataArray.map((data, index) => {
             return (
               <li
-                className={`Suggestion__ele ${((selectIndex - 1) === index)? "Suggestion__ele--focus" : ""}`}
+                className={`Suggestion__ele ${
+                  selectIndex - 1 === index ? "Suggestion__ele--focus" : ""
+                }`}
                 // className="Suggestion__ele"
                 key={index}
                 tabIndex={0}
                 onFocus={() => {
-                  setInputDisplay(data)
-                  setSelectIndex(index + 1)
+                  setInputDisplay(data);
+                  setSelectIndex(index + 1);
                 }}
                 onClick={() => {
                   onClickEle(data);
@@ -108,7 +130,7 @@ export default function SearchBar({ initVal, dataArray, onChange, onClickEle, on
                   setSelectIndex(0);
                   setDisplay(false);
                 }}
-                ref={el => selectionRef.current[index] = el}
+                ref={(el) => (selectionRef.current[index] = el)}
               >
                 <div className="Suggestion__ele__icon">
                   <i className="fa fa-search"></i>

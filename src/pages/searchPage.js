@@ -1,6 +1,6 @@
 // components
 import SearchBar from "../Components/SearchBar/SearchBar";
-import Card from "../Components/Card/Card";
+import CardList from "../Components/CardList/CardList";
 import ThemeSelector from "../Components/themeSelector/themeSelector";
 import { MAL_KEY } from "../secret";
 
@@ -11,74 +11,132 @@ import { useQueryAnime } from "../Hooks/useQueryAnime";
 
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {useSelector} from "react-redux"
+import { useSelector } from "react-redux";
 
 import "./style.scss";
 
 const query = `
 `;
 
-export default function MainPage() {
+export default function SearchPage() {
   let { id } = useParams();
 
-  const {setInput, suggestionData, setSuggestion} = useQueryList();
-  const {selectData, setSelectId} = useQueryAnime();
-
   const navigate = useNavigate();
-  const isDark = useSelector((state) => state.theme.dark)
+  const isDark = useSelector((state) => state.theme.dark);
+
+  const [input, setInput] = useState(id);
+  const [searchBarSuggestionData, setSearchBarSuggestionData] = useState([]);
+  const [cardListSuggestionData, setCardListSuggestionData] = useState([]);
 
   useEffect(() => {
-    console.log("URL id", id);
-    setSelectId(id);
-  }, [id]);
+    if (id.length !== 0) {
+      let URL = `https://api.jikan.moe/v4/anime?letter=${input}&sfw&order_by=popularity&sort=asc`;
+      fetch(URL)
+        .then((res) => res.json())
+        .then((data) => {
+          // console.log(data);
+          let temp = data.data.filter((ele) => ele.approved);
+          temp = temp.sort((a, b) => a.popularity - b.popularity);
+          setSearchBarSuggestionData(
+            temp.map((ele) => {
+              return { title: ele.title, id: ele.mal_id };
+            })
+          );
+          setCardListSuggestionData(
+            temp.map((ele) => {
+              return {
+                title: ele.title,
+                id: ele.mal_id,
+                image: ele.images.jpg.large_image_url,
+                synopsis: ele.synopsis,
+                genres: ele.genres.map((item) => item.name),
+                trailer: ele.trailer.url,
+                sources: ele.streaming,
+              };
+            })
+          );
+        });
+    } else {
+      setSearchBarSuggestionData([]);
+      setCardListSuggestionData([]);
+    }
+  }, []);
 
-  function handleClickEle(data) {
-    setInput(data);
-    for (let i = 0; i < suggestionData.length; i++) {
-      if (suggestionData[i].title === data) {
-        setSelectId(suggestionData[i].id);
-        navigate(`/${suggestionData[i].id}`);
+  useEffect(() => {
+    if (input.length !== 0) {
+      let URL = `https://api.jikan.moe/v4/anime?letter=${input}&sfw&order_by=popularity&sort=asc`;
+      fetch(URL)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          let temp = data.data.filter((ele) => ele.approved);
+          temp = temp.sort((a, b) => a.popularity - b.popularity);
+          setSearchBarSuggestionData(
+            temp.map((ele) => {
+              return { title: ele.title, id: ele.mal_id };
+            })
+          );
+        });
+    } else {
+      // there's no input to search
+      setSearchBarSuggestionData([]);
+    }
+  }, [input]);
+
+  function handleClickEleSearchBar(data) {
+    for (let i = 0; i < searchBarSuggestionData.length; i++) {
+      if (searchBarSuggestionData[i].title === data) {
+        // setSelectId(suggestionData[i].id);
+        navigate(`/${searchBarSuggestionData[i].id}`);
         break;
       }
     }
   }
 
-  // function handleSubmit(data) {
-  //   setInput(data);
-  //   let URL = `https://api.jikan.moe/v4/anime?q=${data}&nsfw`;
-  //   fetch(URL)
-  //   .then((res) => res.json())
-  //   .then((data) => {
-  //     // console.log(data);
-  //     let temp = data.data.filter((ele) => ele.approved);
-  //     temp = temp.sort((a, b) => a.popularity - b.popularity);
-  //     setSuggestion(
-  //       temp.map((ele) => {
-  //         return { title: ele.title, id: ele.mal_id };
-  //       })
-  //     );
-  //   });
-  // }
+  function handleClickCard(id) {
+    navigate(`/${id}`);
+  }
+
+  function handleSubmitSearchBar(data) {
+    setInput(data);
+    console.log("submit called");
+    if (data.length !== 0) {
+      let URL = `https://api.jikan.moe/v4/anime?letter=${data}&sfw&order_by=popularity&sort=asc`;
+      fetch(URL)
+        .then((res) => res.json())
+        .then((data) => {
+          // console.log(data);
+          let temp = data.data.filter((ele) => ele.approved);
+          temp = temp.sort((a, b) => a.popularity - b.popularity);
+          setSearchBarSuggestionData(
+            temp.map((ele) => {
+              return { title: ele.title, id: ele.mal_id };
+            })
+          );
+          setCardListSuggestionData(
+            temp.map((ele) => {
+              return {
+                title: ele.title,
+                id: ele.mal_id,
+                image: ele.images.jpg.large_image_url,
+                synopsis: ele.synopsis,
+                genres: ele.genres.map((item) => item.name),
+                trailer: ele.trailer.url,
+                sources: ele.streaming,
+              };
+            })
+          );
+        });
+    } else {
+      setSearchBarSuggestionData([]);
+      setCardListSuggestionData([]);
+    }
+    navigate(`/search/${data}`);
+  }
 
   function handleChange(newInput) {
     setInput(newInput);
   }
-
-  // let backgroundImage;
-  // if (isDark) {
-  //   backgroundImage = `linear-gradient( rgba(30,27,38, 0.95), rgba(30,27,38, 0.95)), url(https://images6.alphacoders.com/104/thumb-1920-1042578.png)`
-  // } else {
-  //   backgroundImage = `linear-gradient( rgba(200,200,200, 0.95), rgba(200,200,200, 0.95)), url(https://ae01.alicdn.com/kf/H780a714db5ac42c39d17d156c90c6f189/Anime-Demon-Slayer-Kimetsu-no-Yaiba-Wall-Murals-Kochou-Shinobu-Wallpaper-Custom-3D-Wallpaper-Bedroom-Cosplay.jpg_640x640.jpg)`
-  // }
-
-  // let App_style = {
-  //   minHeight: "100vh",
-  //   margin: "0",
-  //   backgroundSize: "cover",
-  //   backgroundRepeat: "no-repeat",
-  //   backgroundPosition: "center",
-  //   backgroundImage: backgroundImage,
-  // };
 
   return (
     <div className={`App ${isDark ? "App--Dark" : "App--Light"}`}>
@@ -86,23 +144,15 @@ export default function MainPage() {
       <div className="Search__section">
         <div className="Search__container">
           <SearchBar
-            initVal={id && selectData ? selectData.title : ""}
-            dataArray={suggestionData.map((data) => data.title)}
+            initVal={id}
+            dataArray={searchBarSuggestionData.map((data) => data.title)}
             onChange={debounce(handleChange, 500)}
-            onClickEle={handleClickEle}
+            onClickEle={handleClickEleSearchBar}
+            onSubmit={handleSubmitSearchBar}
           />
         </div>
       </div>
-      {selectData && (
-        <Card
-          title={selectData.title}
-          image={selectData.images.jpg.large_image_url}
-          synopsis={selectData.synopsis}
-          genres={selectData.genres.map((item) => item.name)}
-          trailer={selectData.trailer.url}
-          sources={selectData.streaming}
-        />
-      )}
+      <CardList datas={cardListSuggestionData} onClickCard={handleClickCard}/>
     </div>
   );
 }

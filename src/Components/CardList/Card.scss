@@ -1,0 +1,130 @@
+$gray-font-color: rgb(161, 161, 161);
+$dark-font-color: rgb(108, 105, 105);
+$dark-theme: rgb(36, 39, 60);
+$light-theme: rgb(240, 240, 240);
+
+$animation-time: 500ms;
+$animation-expansion: 1.05;
+
+$card-width: 250px;
+$card-height: 472px;
+$img-width: 250px;
+$img-height: 353px;
+
+$card-list-width-large: 1140px;
+$card-list-width-medium: 720px;
+$card-list-width-small: 360px;
+
+.CardList--container {
+  display: flex;
+  justify-content: center;
+}
+
+.CardList {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 1140px;
+}
+
+.Card--container {
+  display: flex;
+  height: 542px;
+  justify-content: center;
+//   margin: 35px 0;
+  pointer-events: none;
+//   &:hover {
+//     margin: calc(35px - ($card-height * 0.1)) 0;
+//   }
+//   transition: margin $animation-time;
+}
+
+.Card {
+  border-radius: 1em;
+  height: $card-height;
+  width: $card-width;
+  overflow: hidden;
+  box-shadow: 8px 16px 16px rgb(0 0 0 / 25%);
+  pointer-events: auto;
+  &--Light {
+    background: $light-theme;
+  }
+  &--Dark {
+    background: $dark-theme;
+  }
+  &:hover {
+    width: calc($card-width * $animation-expansion);
+    height: calc($card-height * $animation-expansion);
+  }
+  transition: width $animation-time, height $animation-time, background $animation-time;
+}
+
+.Card__image > img {
+  transition: width $animation-time, height $animation-time;
+  width: $img-width;
+  height: $img-height;
+}
+
+.Card:hover .Card__image > img {
+  width: calc($img-width * $animation-expansion);
+  height: calc($img-height * $animation-expansion);
+}
+
+.Card__info {
+  padding: 20px;
+}
+.Card__title {
+  margin-bottom: 10px;
+  text-overflow: ellipsis;
+  white-space: normal;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.Card__genres {
+  font-size: 10.5px;
+}
+
+.Card--Dark {
+  .Card__title {
+    color: $gray-font-color;
+  }
+  .Card__genres {
+    color: $gray-font-color;
+  }
+}
+
+.Card--Light {
+  .Card__title {
+    color: $dark-font-color;
+  }
+  .Card__genres {
+    color: $dark-font-color;
+  }
+}
+
+@media (min-width: 360px) {
+  .CardList {
+    width: $card-list-width-small;
+  }
+  .Card--container { 
+    flex-basis: 100%;
+  }
+}
+@media (min-width: 768px) {
+  .CardList {
+    width: $card-list-width-medium;
+  }
+  .Card--container { 
+    flex-basis: 50%;
+  }
+}
+@media (min-width: 1140px) {
+  .CardList {
+    width: $card-list-width-large;
+  }
+  .Card--container { 
+    flex-basis: 33%;
+  }
+}

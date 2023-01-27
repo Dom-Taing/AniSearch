@@ -4,6 +4,7 @@ export function useQueryAnime() {
   const [selectId, setSelectId] = useState(null);
   const [selectData, setSelectData] = useState(undefined);
   useEffect(() => {
+    console.log("request anime")
     if (selectId) {
       let URL = `https://api.jikan.moe/v4/anime/${selectId}/full`;
       fetch(URL)

@@ -24,7 +24,7 @@ export default function Card(props) {
 
   console.log(props);
   return (
-    <div className={`Profile ${isDark ? "Dark" : "Light"}`}>
+    <div className={`Profile ${isDark ? "Profile--Dark" : "Profile--Light"}`}>
       <div className="container">
         <div className="cellphone-container">
           <div className="movie">
@@ -39,7 +39,7 @@ export default function Card(props) {
                   <ul className="movie-gen">
                     <li>PG-13 /</li>
                     <li>2h 49min /</li>
-                    <li>{genres.toString()}</li>
+                    <li>{genres.join(" / ")}</li>
                   </ul>
                 </div>
               </div>
