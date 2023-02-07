@@ -6,7 +6,7 @@ export default function Card({ data, onClick }) {
 
   const isDark = useSelector((state) => state.theme.dark);
   return (
-    <div className={`Card ${isDark ? "Card--Dark" : "Card--Light"}`} onClick={onClick}>
+    <div className={`Card ${isDark ? "Card--Dark" : "Card--Light"}`} onClick={onClick}> 
         <div className="Card__image">
           <img src={image} />
         </div>

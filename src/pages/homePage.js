@@ -1,43 +1,50 @@
 // import components
 import SearchBar from "../Components/SearchBar/SearchBar";
-import Card from "../Components/Card/Card";
 import ThemeSelector from "../Components/themeSelector/themeSelector";
-import { MAL_KEY } from "../secret";
 
 // import custom hooks
 import { debounce } from "../Hooks/useDebouncer";
-import { useQueryList } from "../Hooks/useQueryList";
-import { useQueryAnime } from "../Hooks/useQueryAnime";
+import { setInput } from "../redux/searchSlice";
 
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {useSelector} from "react-redux"
+import { useDispatch, useSelector } from "react-redux";
 
 import "./style.scss";
+import { fetchSearchList, organizeData } from "../Utils/utils";
 
 const query = `
 `;
 
-export default function MainPage() {
-  // let { id } = useParams();
+export default function HomePage() {
+  // const {setInput, suggestionData, setSuggestion} = useQueryList();
 
-  const {setInput, suggestionData, setSuggestion} = useQueryList();
-  // const {selectData, setSelectId} = useQueryAnime();
+  const input = useSelector((state) => state.searchInput.input);
+  const isDark = useSelector((state) => state.theme.dark);
+  const [suggestionData, setSuggestionData] = useState([]);
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const isDark = useSelector((state) => state.theme.dark)
 
-  // useEffect(() => {
-  //   console.log("URL id", id);
-  //   setSelectId(id);
-  // }, [id]);
+  useEffect(() => {
+    if (input.length !== 0) {
+      fetchSearchList(input, 0).then((data) => {
+        setSuggestionData(
+          data.map((ele) => {
+            return organizeData(ele);
+          })
+        );
+      });
+    } else {
+      setSuggestionData([])
+    }
+  }, [input]);
 
   function handleClickEle(data) {
-    // setInput(data);
     for (let i = 0; i < suggestionData.length; i++) {
       if (suggestionData[i].title === data) {
-        // setSelectId(suggestionData[i].id);
-        navigate(`/${suggestionData[i].id}`);
+        dispatch(setInput(data));
+        navigate(`/${suggestionData[i].id}`, {state: {animeDetail: suggestionData[i]}});
         break;
       }
     }
@@ -48,7 +55,7 @@ export default function MainPage() {
   }
 
   function handleChange(newInput) {
-    setInput(newInput);
+    dispatch(setInput(newInput));
   }
 
   return (

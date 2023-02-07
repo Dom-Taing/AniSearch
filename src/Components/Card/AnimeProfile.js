@@ -4,11 +4,12 @@ import { useSelector } from "react-redux";
 import crunchyroll from "./crunchyroll.png";
 import netflix from "./netflix.png";
 import amazon from "./amazon.png";
-import "./Card.scss";
+import "./AnimeProfile.scss";
 
-export default function Card(props) {
-  const { title, image, synopsis, genres, trailer, sources } = props;
-  const isDark = useSelector((state) => state.theme.dark)
+export default function Card({ animeDetail }) {
+  console.log(animeDetail)
+  const { title, image, synopsis, genres, trailer, sources } = animeDetail;
+  const isDark = useSelector((state) => state.theme.dark);
 
   let movie_img_style = {
     backgroundImage: `url(${image})`,
@@ -22,7 +23,6 @@ export default function Card(props) {
     } else if (sources[i].name === "Netflix") netflix_link = sources[i].url;
   }
 
-  console.log(props);
   return (
     <div className={`Profile ${isDark ? "Profile--Dark" : "Profile--Light"}`}>
       <div className="container">
@@ -56,7 +56,7 @@ export default function Card(props) {
                     </h3>
                   </div>
                 </div>
-                {crunchyroll_link&& (
+                {crunchyroll_link && (
                   <div className="col6 action-btn crunchyroll">
                     {/* <i className="material-icons">&#xE80D;</i> */}
                     <img
@@ -71,9 +71,13 @@ export default function Card(props) {
                 {netflix_link && (
                   <div className="col6 action-btn netflix">
                     {/* <i className="material-icons">&#xE866;</i> */}
-                    <img src={netflix} className="icon" onClick={() => {
+                    <img
+                      src={netflix}
+                      className="icon"
+                      onClick={() => {
                         window.open(netflix_link, "_blank");
-                      }}/>
+                      }}
+                    />
                   </div>
                 )}
                 {/* <div className="col6 action-btn">

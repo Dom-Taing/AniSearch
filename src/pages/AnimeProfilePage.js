@@ -1,6 +1,6 @@
 // import components
 import SearchBar from "../Components/SearchBar/SearchBar";
-import Card from "../Components/Card/Card";
+import AnimeProfile from "../Components/Card/AnimeProfile";
 import ThemeSelector from "../Components/themeSelector/themeSelector";
 import { MAL_KEY } from "../secret";
 
@@ -10,37 +10,59 @@ import { useQueryList } from "../Hooks/useQueryList";
 import { useQueryAnime } from "../Hooks/useQueryAnime";
 
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import {useSelector} from "react-redux"
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
 import "./style.scss";
-
+import { setInput } from "../redux/searchSlice";
+import { fetchAnimeDetail, organizeData, fetchSearchList } from "../Utils/utils";
 const query = `
 `;
 
 export default function AnimeProfilePage() {
   let { id } = useParams();
+  const location = useLocation();
 
-  const {setInput, suggestionData, setSuggestion} = useQueryList();
-  const {selectData, setSelectId} = useQueryAnime();
+  const input = useSelector((state) => state.searchInput.input);
+  const [suggestionData, setSuggestionData] = useState([]);
+
+  const [animeDetail, setAnimeDetail] = useState(
+    location.state ? location.state.animeDetail : undefined
+  );
 
   const navigate = useNavigate();
-  const isDark = useSelector((state) => state.theme.dark)
+  const dispatch = useDispatch();
+  const isDark = useSelector((state) => state.theme.dark);
 
   useEffect(() => {
-    console.log("URL id", id);
-    setSelectId(id);
-  }, [id]);
+    console.log(location)
+    if (!location.state) {
+      fetchAnimeDetail(id).then((data) => {
+        setAnimeDetail(organizeData(data));
+        dispatch(setInput(data.title))
+      });
+    }
+  }, []);
 
   useEffect(() => {
-    setInput(selectData ? selectData.title : "")
-  }, [selectData])
+    if (input.length !== 0) {
+      fetchSearchList(input, 0).then((data) => {
+        setSuggestionData(
+          data.map((ele) => {
+            return organizeData(ele);
+          })
+        );
+      });
+    } else {
+      setSuggestionData([])
+    }
+  }, [input]);
 
   function handleClickEle(data) {
-    setInput(data);
     for (let i = 0; i < suggestionData.length; i++) {
       if (suggestionData[i].title === data) {
-        setSelectId(suggestionData[i].id);
+        dispatch(setInput(data));
+        setAnimeDetail(suggestionData[i])
         navigate(`/${suggestionData[i].id}`);
         break;
       }
@@ -48,11 +70,11 @@ export default function AnimeProfilePage() {
   }
 
   function handleSubmit(data) {
-    navigate(`/search/${data}`)
+    navigate(`/search/${data}`);
   }
 
   function handleChange(newInput) {
-    setInput(newInput);
+    dispatch(setInput(newInput));
   }
 
   return (
@@ -61,7 +83,7 @@ export default function AnimeProfilePage() {
       <div className="Search__section">
         <div className="Search__container">
           <SearchBar
-            initVal={id && selectData ? selectData.title : ""}
+            initVal={id && animeDetail ? animeDetail.title : ""}
             dataArray={suggestionData.map((data) => data.title)}
             onChange={debounce(handleChange, 500)}
             onClickEle={handleClickEle}
@@ -69,16 +91,7 @@ export default function AnimeProfilePage() {
           />
         </div>
       </div>
-      {selectData && (
-        <Card
-          title={selectData.title}
-          image={selectData.images.jpg.large_image_url}
-          synopsis={selectData.synopsis}
-          genres={selectData.genres.map((item) => item.name)}
-          trailer={selectData.trailer.url}
-          sources={selectData.streaming}
-        />
-      )}
+      {animeDetail && <AnimeProfile animeDetail={animeDetail} />}
     </div>
   );
 }

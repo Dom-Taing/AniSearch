@@ -6,14 +6,14 @@ import { MAL_KEY } from "../secret";
 
 // import custom hooks
 import { debounce } from "../Hooks/useDebouncer";
-import { useQueryList } from "../Hooks/useQueryList";
-import { useQueryAnime } from "../Hooks/useQueryAnime";
+import { setInput } from "../redux/searchSlice";
 
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import "./style.scss";
+import { fetchSearchList, organizeData } from "../Utils/utils";
 
 const query = `
 `;
@@ -22,40 +22,24 @@ export default function SearchPage() {
   let { id } = useParams();
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const isDark = useSelector((state) => state.theme.dark);
 
-  const [input, setInput] = useState(id);
+  const input = useSelector((state) => state.searchInput.input);
   const [searchBarSuggestionData, setSearchBarSuggestionData] = useState([]);
   const [cardListSuggestionData, setCardListSuggestionData] = useState([]);
+  const [page, setPage] = useState(0);
 
   useEffect(() => {
     if (id.length !== 0) {
-      let URL = `https://api.jikan.moe/v4/anime?letter=${input}&sfw&order_by=popularity&sort=asc`;
-      fetch(URL)
-        .then((res) => res.json())
-        .then((data) => {
-          // console.log(data);
-          let temp = data.data.filter((ele) => ele.approved);
-          temp = temp.sort((a, b) => a.popularity - b.popularity);
-          setSearchBarSuggestionData(
-            temp.map((ele) => {
-              return { title: ele.title, id: ele.mal_id };
-            })
-          );
-          setCardListSuggestionData(
-            temp.map((ele) => {
-              return {
-                title: ele.title,
-                id: ele.mal_id,
-                image: ele.images.jpg.large_image_url,
-                synopsis: ele.synopsis,
-                genres: ele.genres.map((item) => item.name),
-                trailer: ele.trailer.url,
-                sources: ele.streaming,
-              };
-            })
-          );
+      dispatch(setInput(id));
+      fetchSearchList(id, 0).then((data) => {
+        let temp = data.map((ele) => {
+          return organizeData(ele);
         });
+        setSearchBarSuggestionData(temp);
+        setCardListSuggestionData(temp);
+      });
     } else {
       setSearchBarSuggestionData([]);
       setCardListSuggestionData([]);
@@ -64,21 +48,14 @@ export default function SearchPage() {
 
   useEffect(() => {
     if (input.length !== 0) {
-      let URL = `https://api.jikan.moe/v4/anime?letter=${input}&sfw&order_by=popularity&sort=asc`;
-      fetch(URL)
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-          let temp = data.data.filter((ele) => ele.approved);
-          temp = temp.sort((a, b) => a.popularity - b.popularity);
-          setSearchBarSuggestionData(
-            temp.map((ele) => {
-              return { title: ele.title, id: ele.mal_id };
-            })
-          );
-        });
+      fetchSearchList(input, 0).then((data) => {
+        setSearchBarSuggestionData(
+          data.map((ele) => {
+            return organizeData(ele);
+          })
+        );
+      });
     } else {
-      // there's no input to search
       setSearchBarSuggestionData([]);
     }
   }, [input]);
@@ -86,57 +63,56 @@ export default function SearchPage() {
   function handleClickEleSearchBar(data) {
     for (let i = 0; i < searchBarSuggestionData.length; i++) {
       if (searchBarSuggestionData[i].title === data) {
-        // setSelectId(suggestionData[i].id);
-        navigate(`/${searchBarSuggestionData[i].id}`);
+        navigate(`/${searchBarSuggestionData[i].id}`, {
+          state: { animeDetail: suggestionData[i] },
+        });
         break;
       }
     }
   }
 
   function handleClickCard(id) {
-    navigate(`/${id}`);
+    for (let i = 0; i < cardListSuggestionData.length; i++) {
+      if (cardListSuggestionData[i].id === id) {
+        navigate(`/${cardListSuggestionData[i].id}`, {
+          state: { animeDetail: cardListSuggestionData[i] },
+        });
+        break;
+      }
+    }
+    // navigate(`/${id}`);
   }
 
-  function handleSubmitSearchBar(data) {
-    setInput(data);
+  function handleSubmitSearchBar(newInput) {
+    setInput(newInput);
     console.log("submit called");
-    if (data.length !== 0) {
-      let URL = `https://api.jikan.moe/v4/anime?letter=${data}&sfw&order_by=popularity&sort=asc`;
-      fetch(URL)
-        .then((res) => res.json())
-        .then((data) => {
-          // console.log(data);
-          let temp = data.data.filter((ele) => ele.approved);
-          temp = temp.sort((a, b) => a.popularity - b.popularity);
-          setSearchBarSuggestionData(
-            temp.map((ele) => {
-              return { title: ele.title, id: ele.mal_id };
-            })
-          );
-          setCardListSuggestionData(
-            temp.map((ele) => {
-              return {
-                title: ele.title,
-                id: ele.mal_id,
-                image: ele.images.jpg.large_image_url,
-                synopsis: ele.synopsis,
-                genres: ele.genres.map((item) => item.name),
-                trailer: ele.trailer.url,
-                sources: ele.streaming,
-              };
-            })
-          );
+    if (newInput.length !== 0) {
+      fetchSearchList(newInput, 0).then((data) => {
+        let temp = data.map((ele) => {
+          return organizeData(ele);
         });
+        setSearchBarSuggestionData(temp);
+        setCardListSuggestionData(temp);
+      });
     } else {
       setSearchBarSuggestionData([]);
       setCardListSuggestionData([]);
     }
-    navigate(`/search/${data}`);
+    navigate(`/search/${newInput}`);
   }
 
   function handleChange(newInput) {
-    setInput(newInput);
+    dispatch(setInput(newInput));
   }
+
+  const observer = new IntersectionObserver((entries) => {
+    const first = entries[0];
+    if (first.isIntersecting) {
+      setPage(page + 1);
+    }
+  });
+
+  // console.log(observer);
 
   return (
     <div className={`App ${isDark ? "App--Dark" : "App--Light"}`}>
@@ -152,7 +128,11 @@ export default function SearchPage() {
           />
         </div>
       </div>
-      <CardList datas={cardListSuggestionData} onClickCard={handleClickCard}/>
+      <CardList
+        datas={cardListSuggestionData}
+        onClickCard={handleClickCard}
+        observer={observer}
+      />
     </div>
   );
 }
