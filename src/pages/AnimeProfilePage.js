@@ -1,7 +1,7 @@
 // import components
 import SearchBar from "../Components/SearchBar/SearchBar";
 import AnimeProfile from "../Components/Card/AnimeProfile";
-import ThemeSelector from "../Components/themeSelector/themeSelector";
+import Header from "../Components/Header/Header"
 import { MAL_KEY } from "../secret";
 
 // import custom hooks
@@ -80,7 +80,7 @@ export default function AnimeProfilePage() {
 
   return (
     <div className={`App ${isDark ? "App--Dark" : "App--Light"}`}>
-      <ThemeSelector />
+      <Header />
       <div className="Search__section">
         <div className="Search__container">
           <SearchBar

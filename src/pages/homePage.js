@@ -1,6 +1,6 @@
 // import components
 import SearchBar from "../Components/SearchBar/SearchBar";
-import ThemeSelector from "../Components/themeSelector/themeSelector";
+import Header from "../Components/Header/Header"
 
 // import custom hooks
 import { debounce } from "../Hooks/useDebouncer";
@@ -45,6 +45,7 @@ export default function HomePage() {
       if (suggestionData[i].title === data) {
         dispatch(setInput(data));
         navigate(`/${suggestionData[i].id}`, {state: {animeDetail: suggestionData[i]}});
+        setSuggestionData([]);
         break;
       }
     }
@@ -52,6 +53,7 @@ export default function HomePage() {
 
   function handleSubmit(data) {
     navigate(`/search/${data}`)
+    setSuggestionData([])
   }
 
   function handleChange(newInput) {
@@ -60,7 +62,7 @@ export default function HomePage() {
 
   return (
     <div className={`App ${isDark ? "App--Dark" : "App--Light"}`}>
-      <ThemeSelector />
+      <Header />
       <div className="Search__section">
         <div className="Search__container">
           <SearchBar

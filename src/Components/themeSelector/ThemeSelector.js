@@ -14,7 +14,7 @@ export default function ThemeSelector() {
 
   return (
     <DarkModeSwitch
-      style={{ marginBottom: "2rem", position: "absolute", right: "127px", top: "40px" }}
+      style={{position: "static" }}
       checked={isDark}
       onChange={toggleDarkMode}
       size={31}
