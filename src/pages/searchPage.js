@@ -8,7 +8,7 @@ import { MAL_KEY } from "../secret";
 import { debounce } from "../Hooks/useDebouncer";
 import { setInput } from "../redux/searchSlice";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -30,21 +30,24 @@ export default function SearchPage() {
   const [cardListSuggestionData, setCardListSuggestionData] = useState([]);
   const [page, setPage] = useState(0);
 
+  const cardLoader = useRef(null);
+
+  // this will consider the first render as well
   useEffect(() => {
     if (id.length !== 0) {
-      dispatch(setInput(id));
-      fetchSearchList(id, 0).then((data) => {
+      dispatch(setInput(id)); // need to search why this is needed
+      fetchSearchList(id, page).then((data) => {
         let temp = data.map((ele) => {
           return organizeData(ele);
         });
-        setSearchBarSuggestionData(temp);
-        setCardListSuggestionData(temp);
+        setSearchBarSuggestionData([...searchBarSuggestionData, ...temp]);
+        setCardListSuggestionData([...cardListSuggestionData, ...temp]);
       });
     } else {
       setSearchBarSuggestionData([]);
       setCardListSuggestionData([]);
     }
-  }, []);
+  }, [page]);
 
   useEffect(() => {
     if (input.length !== 0) {
@@ -64,12 +67,31 @@ export default function SearchPage() {
     for (let i = 0; i < searchBarSuggestionData.length; i++) {
       if (searchBarSuggestionData[i].title === data) {
         navigate(`/${searchBarSuggestionData[i].id}`, {
-          state: { animeDetail: suggestionData[i] },
+          state: { animeDetail: searchBarSuggestionData[i] },
         });
         break;
       }
     }
   }
+
+  const handleObserver = useCallback((entries) => {
+    const target = entries[0]
+    if (target.isIntersecting) {
+      setPage((prev) => prev + 1)
+    }
+  }, [])
+
+  useEffect(() => {
+    const option = {
+      root: null,
+      rootMargin: "20px",
+      threshold: 0
+    };
+    const observer = new IntersectionObserver(handleObserver, option);
+    if (loader.current) observer.observe(loader.current);
+  }, [handleObserver]);
+
+
 
   function handleClickCard(id) {
     for (let i = 0; i < cardListSuggestionData.length; i++) {
@@ -84,7 +106,7 @@ export default function SearchPage() {
   }
 
   function handleSubmitSearchBar(newInput) {
-    setInput(newInput);
+    dispatch(setInput(newInput)) // need to look more into why we need this
     console.log("submit called");
     if (newInput.length !== 0) {
       fetchSearchList(newInput, 0).then((data) => {
@@ -99,18 +121,12 @@ export default function SearchPage() {
       setCardListSuggestionData([]);
     }
     navigate(`/search/${newInput}`);
+    setPage(0);
   }
 
   function handleChange(newInput) {
     dispatch(setInput(newInput));
   }
-
-  const observer = new IntersectionObserver((entries) => {
-    const first = entries[0];
-    if (first.isIntersecting) {
-      setPage(page + 1);
-    }
-  });
 
   // console.log(observer);
 
@@ -131,8 +147,8 @@ export default function SearchPage() {
       <CardList
         datas={cardListSuggestionData}
         onClickCard={handleClickCard}
-        observer={observer}
       />
+      <div ref={cardLoader}></div>
     </div>
   );
 }

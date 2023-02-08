@@ -59,6 +59,7 @@ export default function AnimeProfilePage() {
   }, [input]);
 
   function handleClickEle(data) {
+    console.log("click ele")
     for (let i = 0; i < suggestionData.length; i++) {
       if (suggestionData[i].title === data) {
         dispatch(setInput(data));

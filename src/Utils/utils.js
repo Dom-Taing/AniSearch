@@ -3,8 +3,9 @@ export async function fetchSearchList(input, page) {
   const URL = `https://api.jikan.moe/v4/anime?letter=${input}&sfw&order_by=popularity&sort=asc&page=${page}`;
   let fetchResult = await fetch(URL);
   let fetchJson = await fetchResult.json();
+  console.log(fetchJson);
   let data = fetchJson.data.filter((ele) => ele.approved);
-  data = data.sort((a, b) => a.popularity - b.popularity);
+  // data = data.sort((a, b) => a.popularity - b.popularity);
   return data;
 }
 
