@@ -88,7 +88,7 @@ export default function SearchPage() {
       threshold: 0
     };
     const observer = new IntersectionObserver(handleObserver, option);
-    if (loader.current) observer.observe(loader.current);
+    if (cardLoader.current) observer.observe(cardLoader.current);
   }, [handleObserver]);
 
 
