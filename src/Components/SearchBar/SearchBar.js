@@ -61,7 +61,6 @@ export default function SearchBar({
       setInputDisplay(yourInput);
     } else {
       setInputDisplay(dataArray[tempIndex - 1]);
-      console.log(selectionRef.current[tempIndex - 1]);
       selectionRef.current[tempIndex - 1].scrollIntoViewIfNeeded(false);
     }
   }

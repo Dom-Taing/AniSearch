@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-export const themeSlice = createSlice({
+export const searchSlice = createSlice({
   name: 'searchInput',
   initialState: {
     input: "",
@@ -14,6 +14,6 @@ export const themeSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { setInput } = themeSlice.actions
+export const { setInput } = searchSlice.actions
 
-export default themeSlice.reducer
+export default searchSlice.reducer

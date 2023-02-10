@@ -7,7 +7,6 @@ import amazon from "./amazon.png";
 import "./AnimeProfile.scss";
 
 export default function Card({ animeDetail }) {
-  console.log(animeDetail)
   const { title, image, synopsis, genres, trailer, sources } = animeDetail;
   const isDark = useSelector((state) => state.theme.dark);
 

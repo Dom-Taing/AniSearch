@@ -5,16 +5,23 @@ import logoWhite from "./logo--White.png";
 import logoBlack from "./logo--Black.png";
 
 import "./Header.scss";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { setInput } from "../../redux/searchSlice";
 
 export default function Header() {
   const isDark = useSelector((state) => state.theme.dark);
-  const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  function navigateHome() {
+    dispatch(setInput(""))
+    navigate("/")
+  }
   return (
     <div className="header--wrapper">
       <div className={`header ${isDark ? "header--Dark" : "header--Light"}`}>
-        <div className="header__left" onClick={() => {navigate("/")}}>
+        <div className="header__left" onClick={navigateHome}>
           <div className="header__left__ele header__logo">
             {isDark && <img src={logoWhite} />}
             {!isDark && <img src={logoBlack} />}

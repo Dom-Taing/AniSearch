@@ -11,7 +11,6 @@ export function useQueryList() {
       fetch(URL)
         .then((res) => res.json())
         .then((data) => {
-          console.log(data);
           let temp = data.data.filter((ele) => ele.approved);
           temp = temp.sort((a, b) => a.popularity - b.popularity);
           setSuggestion(

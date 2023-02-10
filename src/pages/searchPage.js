@@ -1,7 +1,7 @@
 // components
 import SearchBar from "../Components/SearchBar/SearchBar";
 import CardList from "../Components/CardList/CardList";
-import Header from "../Components/Header/Header"
+import Header from "../Components/Header/Header";
 import { MAL_KEY } from "../secret";
 
 // import custom hooks
@@ -14,9 +14,11 @@ import { useDispatch, useSelector } from "react-redux";
 
 import "./style.scss";
 import { fetchSearchList, organizeData } from "../Utils/utils";
-
-const query = `
-`;
+import QueryContainer from "../Components/QueryContainer/QueryContainer";
+import {
+  concatenateSuggestion,
+  setSuggestion,
+} from "../redux/searchSuggestion";
 
 export default function SearchPage() {
   let { id } = useParams();
@@ -26,22 +28,38 @@ export default function SearchPage() {
   const isDark = useSelector((state) => state.theme.dark);
 
   const input = useSelector((state) => state.searchInput.input);
-  const [searchBarSuggestionData, setSearchBarSuggestionData] = useState([]);
+  // const [searchBarSuggestionData, setSearchBarSuggestionData] = useState([]);
   const [cardListSuggestionData, setCardListSuggestionData] = useState([]);
   const [page, setPage] = useState(0);
 
   const cardLoader = useRef(null);
 
+  // a wrapper function that concatenate the new suggestion to the search bar
+  function addSearchBarSuggestionData(newInput) {
+    dispatch(concatenateSuggestion(newInput));
+  }
+
+  // a wrapper function that set the new suggestion of the search bar
+  function setSearchBarSuggestionData(newInput) {
+    dispatch(setSuggestion(newInput));
+  }
+
   // this will consider the first render as well
   useEffect(() => {
-    if (id.length !== 0) {
-      dispatch(setInput(id)); // need to search why this is needed
+    console.log("page rerender", page);
+    if (id.length !== 0 && page > 0) {
+      // without changing input you can prevent one fetch
+      // dispatch(setInput(id)); // need to search why this is needed // needed because if you reload the link on that page when you erase the input the suggestion will stay the same // fixed
       fetchSearchList(id, page).then((data) => {
         let temp = data.map((ele) => {
           return organizeData(ele);
         });
-        setSearchBarSuggestionData([...searchBarSuggestionData, ...temp]);
-        setCardListSuggestionData([...cardListSuggestionData, ...temp]);
+        addSearchBarSuggestionData(temp);
+        if (page === 0) {
+          setCardListSuggestionData(temp);
+        } else {
+          setCardListSuggestionData([...cardListSuggestionData, ...temp]);
+        }
       });
     } else {
       setSearchBarSuggestionData([]);
@@ -49,91 +67,105 @@ export default function SearchPage() {
     }
   }, [page]);
 
-  useEffect(() => {
-    if (input.length !== 0) {
-      fetchSearchList(input, 0).then((data) => {
-        setSearchBarSuggestionData(
-          data.map((ele) => {
-            return organizeData(ele);
-          })
-        );
-      });
-    } else {
-      setSearchBarSuggestionData([]);
-    }
-  }, [input]);
+  // useEffect(() => {
+  //   if (input.length !== 0) {
+  //     fetchSearchList(input, 0).then((data) => {
+  //       setSearchBarSuggestionData(
+  //         data.map((ele) => {
+  //           return organizeData(ele);
+  //         })
+  //       );
+  //     });
+  //   } else {
+  //     setSearchBarSuggestionData([]);
+  //   }
+  // }, [input]);
 
-  function handleClickEleSearchBar(data) {
-    for (let i = 0; i < searchBarSuggestionData.length; i++) {
-      if (searchBarSuggestionData[i].title === data) {
-        navigate(`/${searchBarSuggestionData[i].id}`, {
-          state: { animeDetail: searchBarSuggestionData[i] },
-        });
-        break;
-      }
-    }
-  }
+  // function handleClickEleSearchBar(data) {
+  //   for (let i = 0; i < searchBarSuggestionData.length; i++) {
+  //     if (searchBarSuggestionData[i].title === data) {
+  //       navigate(`/${searchBarSuggestionData[i].id}`, {
+  //         state: { animeDetail: searchBarSuggestionData[i] },
+  //       });
+  //       break;
+  //     }
+  //   }
+  // }
 
   const handleObserver = useCallback((entries) => {
-    const target = entries[0]
+    const target = entries[0];
     if (target.isIntersecting) {
-      setPage((prev) => prev + 1)
+      setPage((prev) => prev + 1);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     const option = {
       root: null,
       rootMargin: "20px",
-      threshold: 0
+      threshold: 0,
     };
     const observer = new IntersectionObserver(handleObserver, option);
     if (cardLoader.current) observer.observe(cardLoader.current);
   }, [handleObserver]);
 
-
-
-  function handleClickCard(id) {
+  function handleClickCard(selectId) {
     for (let i = 0; i < cardListSuggestionData.length; i++) {
-      if (cardListSuggestionData[i].id === id) {
-        navigate(`/${cardListSuggestionData[i].id}`, {
-          state: { animeDetail: cardListSuggestionData[i] },
-        });
+      if (cardListSuggestionData[i].id === selectId) {
+        navigate(`/${selectId}`, {state: {animeDetail: cardListSuggestionData[i]}})
         break;
       }
     }
-    // navigate(`/${id}`);
   }
+
+  // function handleSubmitSearchBar(newInput) {
+  //   dispatch(setInput(newInput)) // need to look more into why we need this
+  //   console.log("submit called");
+  //   if (newInput.length !== 0) {
+  //     fetchSearchList(newInput, 0).then((data) => {
+  //       let temp = data.map((ele) => {
+  //         return organizeData(ele);
+  //       });
+  //       setSearchBarSuggestionData(temp);
+  //       setCardListSuggestionData(temp);
+  //     });
+  //   } else {
+  //     setSearchBarSuggestionData([]);
+  //     setCardListSuggestionData([]);
+  //   }
+  //   navigate(`/search/${newInput}`);
+  //   setPage(0);
+  // }
 
   function handleSubmitSearchBar(newInput) {
-    dispatch(setInput(newInput)) // need to look more into why we need this
-    console.log("submit called");
-    if (newInput.length !== 0) {
-      fetchSearchList(newInput, 0).then((data) => {
-        let temp = data.map((ele) => {
-          return organizeData(ele);
-        });
-        setSearchBarSuggestionData(temp);
-        setCardListSuggestionData(temp);
-      });
-    } else {
-      setSearchBarSuggestionData([]);
-      setCardListSuggestionData([]);
-    }
-    navigate(`/search/${newInput}`);
-    setPage(0);
+    // dispatch(setInput(newInput)) // need to look more into why we need this
+    setPage(0); // this will trigger the useEffect to fetch data
+    // if (newInput.length !== 0) {
+    //   fetchSearchList(newInput, 0).then((data) => {
+    //     let temp = data.map((ele) => {
+    //       return organizeData(ele);
+    //     });
+    //     setSearchBarSuggestionData(temp);
+    //     setCardListSuggestionData(temp);
+    //   });
+    // } else {
+    //   setSearchBarSuggestionData([]);
+    //   setCardListSuggestionData([]);
+    // }
+    // setPage(0)
   }
 
-  function handleChange(newInput) {
-    dispatch(setInput(newInput));
-  }
+  // function handleChange(newInput) {
+  //   dispatch(setInput(newInput));
+  // }
 
   // console.log(observer);
 
   return (
     <div className={`App ${isDark ? "App--Dark" : "App--Light"}`}>
       <Header />
-      <div className="Search__section">
+      <QueryContainer initValue={id} onSubmit={handleSubmitSearchBar} />
+      {/* <div className="Search__section">
         <div className="Search__container">
           <SearchBar
             initVal={id}
@@ -143,11 +175,8 @@ export default function SearchPage() {
             onSubmit={handleSubmitSearchBar}
           />
         </div>
-      </div>
-      <CardList
-        datas={cardListSuggestionData}
-        onClickCard={handleClickCard}
-      />
+      </div> */}
+      <CardList datas={cardListSuggestionData} onClickCard={handleClickCard} />
       <div ref={cardLoader}></div>
     </div>
   );
