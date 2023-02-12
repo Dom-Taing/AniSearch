@@ -30,9 +30,10 @@ export default function SearchPage() {
   const input = useSelector((state) => state.searchInput.input);
   // const [searchBarSuggestionData, setSearchBarSuggestionData] = useState([]);
   const [cardListSuggestionData, setCardListSuggestionData] = useState([]);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState({ currentPage: 1, hasNext: false });
 
   const cardLoader = useRef(null);
+  const haveScroll = useRef(false);
 
   // a wrapper function that concatenate the new suggestion to the search bar
   function addSearchBarSuggestionData(newInput) {
@@ -44,18 +45,22 @@ export default function SearchPage() {
     dispatch(setSuggestion(newInput));
   }
 
+  document.addEventListener("scroll", () => {
+    haveScroll.current = true;
+  });
+
   // this will consider the first render as well
   useEffect(() => {
     console.log("page rerender", page);
-    if (id.length !== 0 && page > 0) {
+    if (id.length !== 0) {
       // without changing input you can prevent one fetch
-      // dispatch(setInput(id)); // need to search why this is needed // needed because if you reload the link on that page when you erase the input the suggestion will stay the same // fixed
-      fetchSearchList(id, page).then((data) => {
+      // dispatch(setInput(id)); // need to search why this is needed // needed because if you reload the link on that page when you erase the input the suggestion will stay the same
+      fetchSearchList(id, page.currentPage).then((data) => {
         let temp = data.map((ele) => {
           return organizeData(ele);
         });
         addSearchBarSuggestionData(temp);
-        if (page === 0) {
+        if (page.currentPage === 1) {
           setCardListSuggestionData(temp);
         } else {
           setCardListSuggestionData([...cardListSuggestionData, ...temp]);
@@ -94,8 +99,11 @@ export default function SearchPage() {
 
   const handleObserver = useCallback((entries) => {
     const target = entries[0];
-    if (target.isIntersecting) {
-      setPage((prev) => prev + 1);
+    if (target.isIntersecting && haveScroll.current) {
+      console.log("page intersecting");
+      setPage((prev) => {
+        return { ...prev, currentPage: prev.currentPage + 1 };
+      });
     }
   }, []);
 
@@ -112,7 +120,9 @@ export default function SearchPage() {
   function handleClickCard(selectId) {
     for (let i = 0; i < cardListSuggestionData.length; i++) {
       if (cardListSuggestionData[i].id === selectId) {
-        navigate(`/${selectId}`, {state: {animeDetail: cardListSuggestionData[i]}})
+        navigate(`/${selectId}`, {
+          state: { animeDetail: cardListSuggestionData[i] },
+        });
         break;
       }
     }
@@ -139,7 +149,8 @@ export default function SearchPage() {
 
   function handleSubmitSearchBar(newInput) {
     // dispatch(setInput(newInput)) // need to look more into why we need this
-    setPage(0); // this will trigger the useEffect to fetch data
+    setPage({ ...page, currentPage: 1 }); // this will trigger the useEffect to fetch data
+    haveScroll.current = false;
     // if (newInput.length !== 0) {
     //   fetchSearchList(newInput, 0).then((data) => {
     //     let temp = data.map((ele) => {
@@ -152,7 +163,6 @@ export default function SearchPage() {
     //   setSearchBarSuggestionData([]);
     //   setCardListSuggestionData([]);
     // }
-    // setPage(0)
   }
 
   // function handleChange(newInput) {
@@ -177,7 +187,7 @@ export default function SearchPage() {
         </div>
       </div> */}
       <CardList datas={cardListSuggestionData} onClickCard={handleClickCard} />
-      <div ref={cardLoader}></div>
+      <div className="card--loader" ref={cardLoader}></div>
     </div>
   );
 }

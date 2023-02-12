@@ -27,22 +27,4 @@ html, body{
     }
     transition: background 500ms;
 }
-
-.Search__section {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 195px;
-}
-
-.Search__container {
-    // min-width: 566px;
-    // width: 50%;
-    position: absolute;
-    top: 90px;
-    // margin-top: 20vh;
-    width: 566px;
-    max-width: 100vw;
-    z-index: 90;
-}
   
