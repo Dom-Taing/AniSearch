@@ -36,3 +36,15 @@
 .filter--options {
     margin: 10px;
 }
+
+.year--selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.year {
+    width: 4em;
+    text-align: center;
+}
