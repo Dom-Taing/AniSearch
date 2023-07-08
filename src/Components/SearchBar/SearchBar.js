@@ -22,7 +22,7 @@ export default function SearchBar({
   useEffect(() => {
     if (initVal) {
       setInputDisplay(initVal);
-      setYourInput(initVal)
+      setYourInput(initVal);
     }
   }, [initVal]);
 
@@ -37,6 +37,7 @@ export default function SearchBar({
   );
 
   // creating an array of size dataArray for the ref
+  // maybe it does more than just creating a large array
   useEffect(() => {
     selectionRef.current = selectionRef.current.slice(0, dataArray.length);
   }, [dataArray]);

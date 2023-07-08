@@ -18,10 +18,14 @@
   transition: color 500ms;
 }
 
+.header__left {
+  text-decoration: none;
+}
+
 .header__left:hover {
-    // color: blue;
-    // transition: color 500ms;
-    cursor: pointer;
+  // color: blue;
+  // transition: color 500ms;
+  cursor: pointer;
 }
 
 .header__left,
@@ -30,8 +34,8 @@
 }
 
 .header__title {
-    font-size: 24px;
-    font-family: QuickSand;
+  font-size: 24px;
+  font-family: QuickSand;
 }
 
 .header__right__ele {
@@ -47,10 +51,10 @@
 
 $layout-breakpoint-small: 960px;
 @media (max-width: 360px) {
-    .header {
-      width: 100%;
-    }
+  .header {
+    width: 100%;
   }
+}
 @media (min-width: 360px) {
   .header {
     width: 566px;

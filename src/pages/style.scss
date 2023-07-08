@@ -1,30 +1,37 @@
-*{
-    box-sizing: border-box;
-    margin: 0;
-  }
-  
-html, body{
-    margin: 0;
-    // background: black;
-    font-family: 'Montserrat', helvetica, arial, sans-serif;
-    font-size: 14px;
-    font-weight: 400;
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+html,
+body {
+  margin: 0;
+  // background: black;
+  font-family: "Montserrat", helvetica, arial, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
 }
 
 .App {
-    min-height: 100vh;
-    margin: 0;
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
-    &--Dark {
-        background: rgb(21,22,35);
-        // background-image: linear-gradient( rgba(30,27,38, 0.95), rgba(30,27,38, 0.95)), url(https://images6.alphacoders.com/104/thumb-1920-1042578.png);
-    }
-    &--Light {
-        background: rgb(230,234,240);
-        // background-image: linear-gradient( rgba(230,234,240, 0.95), rgba(230,234,240, 0.95)), url(https://ae01.alicdn.com/kf/H780a714db5ac42c39d17d156c90c6f189/Anime-Demon-Slayer-Kimetsu-no-Yaiba-Wall-Murals-Kochou-Shinobu-Wallpaper-Custom-3D-Wallpaper-Bedroom-Cosplay.jpg_640x640.jpg);
-    }
-    transition: background 500ms;
+  min-height: 100vh;
+  margin: 0;
+  padding-bottom: 200px;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  &--Dark {
+    background: rgb(21, 22, 35);
+    // background-image: linear-gradient( rgba(30,27,38, 0.95), rgba(30,27,38, 0.95)), url(https://images6.alphacoders.com/104/thumb-1920-1042578.png);
+  }
+  &--Light {
+    background: rgb(230, 234, 240);
+    // background-image: linear-gradient( rgba(230,234,240, 0.95), rgba(230,234,240, 0.95)), url(https://ae01.alicdn.com/kf/H780a714db5ac42c39d17d156c90c6f189/Anime-Demon-Slayer-Kimetsu-no-Yaiba-Wall-Murals-Kochou-Shinobu-Wallpaper-Custom-3D-Wallpaper-Bedroom-Cosplay.jpg_640x640.jpg);
+  }
+  transition: background 500ms;
 }
-  
+
+.CarouselsList {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}

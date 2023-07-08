@@ -1,0 +1,19 @@
+$bright-white: white;
+$dark-black: rgb(35, 37, 43);
+
+$off-white: rgb(230, 234, 240);
+$off-black: rgb(36, 39, 60);
+
+$light-gray: rgb(161, 161, 161);
+$dark-gray: rgb(108, 105, 105);
+
+:export {
+  brightWhite: $bright-white;
+  darkBlack: $dark-black;
+
+  offWhite: $off-white;
+  offBlack: $off-black;
+
+  lightGray: $light-gray;
+  darkGray: $dark-gray;
+}

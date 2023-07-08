@@ -15,19 +15,19 @@ export default function Header() {
   const navigate = useNavigate();
 
   function navigateHome() {
-    dispatch(setInput(""))
-    navigate("/")
+    dispatch(setInput(""));
+    navigate("/");
   }
   return (
     <div className="header--wrapper">
       <div className={`header ${isDark ? "header--Dark" : "header--Light"}`}>
-        <div className="header__left" onClick={navigateHome}>
+        <Link to={"/"} className="header__left" onClick={navigateHome}>
           <div className="header__left__ele header__logo">
             {isDark && <img src={logoWhite} />}
             {!isDark && <img src={logoBlack} />}
           </div>
           <div className="header__left__ele header__title">ANISearch</div>
-        </div>
+        </Link>
         <div className="header__right">
           <div className="header__right__ele header__user">Login</div>
           <div className="header__right__ele header__theme">

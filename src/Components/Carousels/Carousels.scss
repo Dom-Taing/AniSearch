@@ -1,0 +1,103 @@
+@import "../../Style/colors.scss";
+
+$card-list-width-large: 1110px;
+$card-list-width-medium: 720px;
+$card-list-width-small: 360px;
+
+.Carousels--Wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  // &--Dark,
+  // & .Carousels_buttonIcon {
+  //   color: $bright-white;
+  // }
+  // &--White,
+  // & .Carousels_buttonIcon {
+  //   color: $dark-black;
+  // }
+  transition: color 500ms;
+}
+
+.Carousels__Title {
+  margin-bottom: 32px;
+  padding: 0 30px;
+  text-align: left;
+  width: $card-list-width-large;
+  & h2 {
+    font-family: QuickSand;
+  }
+  &--line {
+    height: 0.25em;
+    background-image: linear-gradient(to left, #213944, #2abdbb);
+    margin: 0px;
+  }
+}
+
+.Carousels {
+  display: flex;
+  width: $card-list-width-large;
+}
+
+.Carousels__buttonWrapper {
+  min-width: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.Carousels__button {
+  border: none;
+  background-color: inherit;
+  margin: 0 15px;
+  transition: color 500ms;
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.Carousels_buttonIcon {
+  font-size: 40px;
+  font-weight: 200;
+}
+
+.Carousels--Card:hover {
+  cursor: pointer;
+}
+
+.Carousels--Card__image {
+  width: 150px;
+}
+
+.Carousels__list {
+  display: flex;
+  gap: 30px;
+  overflow-x: scroll;
+}
+
+.Carousels__list::-webkit-scrollbar {
+  display: none;
+}
+
+.Carousels--Card__title {
+  text-overflow: ellipsis;
+  white-space: normal;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.Carousels--Wrapper--Dark {
+  color: $bright-white;
+  .Carousels__button {
+    color: $bright-white;
+  }
+}
+
+.Carousels--Wrapper--Light {
+  color: $dark-black;
+  .Carousels_button {
+    color: $dark-black;
+  }
+}

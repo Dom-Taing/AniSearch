@@ -31,12 +31,12 @@ $card-list-width-small: 360px;
   display: flex;
   height: 542px;
   justify-content: center;
-//   margin: 35px 0;
+  //   margin: 35px 0;
   pointer-events: none;
-//   &:hover {
-//     margin: calc(35px - ($card-height * 0.1)) 0;
-//   }
-//   transition: margin $animation-time;
+  //   &:hover {
+  //     margin: calc(35px - ($card-height * 0.1)) 0;
+  //   }
+  //   transition: margin $animation-time;
 }
 
 .Card {
@@ -56,7 +56,8 @@ $card-list-width-small: 360px;
     width: calc($card-width * $animation-expansion);
     height: calc($card-height * $animation-expansion);
   }
-  transition: width $animation-time, height $animation-time, background $animation-time;
+  transition: width $animation-time, height $animation-time,
+    background $animation-time;
 }
 
 .Card__image > img {
@@ -108,7 +109,7 @@ $card-list-width-small: 360px;
   .CardList {
     width: $card-list-width-small;
   }
-  .Card--container { 
+  .Card--container {
     flex-basis: 100%;
   }
 }
@@ -116,7 +117,7 @@ $card-list-width-small: 360px;
   .CardList {
     width: $card-list-width-medium;
   }
-  .Card--container { 
+  .Card--container {
     flex-basis: 50%;
   }
 }
@@ -124,7 +125,7 @@ $card-list-width-small: 360px;
   .CardList {
     width: $card-list-width-large;
   }
-  .Card--container { 
+  .Card--container {
     flex-basis: 33%;
   }
 }

@@ -18,12 +18,33 @@ export async function fetchAnimeDetail(id) {
 
 export function organizeData(data) {
   return {
-    title: data.title,
-    id: data.mal_id,
-    image: data.images.jpg.large_image_url,
-    synopsis: data.synopsis,
-    genres: data.genres.map((item) => item.name),
-    trailer: data.trailer.url,
+    title: data.title ? data.title : "",
+    id: data.mal_id ? data.mal_id : -1,
+    image: data.images ? data.images.jpg.large_image_url : "",
+    synopsis: data.synopsis ? data.synopsis : "",
+    genres: data.genres ? data.genres.map((item) => item.name) : [],
+    trailer: data.trailer ? data.trailer.url : "",
     sources: data.streaming ? data.streaming : [],
+  };
+}
+
+export function organizeAniListData(data) {
+  let trailer = "";
+  if (data.trailer && data.trailer.site === "youtube") {
+    trailer = `https://www.youtube.com/watch?v=${data.trailer.id}`;
+  }
+  let sources = data.externalLinks.filter((ele) => ele.type === "STREAMING");
+  sources = sources.map((ele) => {
+    return { name: ele.site, url: ele.url };
+  });
+
+  return {
+    title: data.title ? data.title.romaji : "",
+    id: data.idMal ? data.idMal : -1,
+    image: data.coverImage ? data.coverImage.extraLarge : "",
+    synopsis: data.description ? data.description : "",
+    genres: data.genres ? data.genres : [],
+    trailer: trailer,
+    sources: sources,
   };
 }
